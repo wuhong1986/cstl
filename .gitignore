@@ -1,0 +1,4 @@
+*.o
+.vimproject
+cstl_test
+*.pyc
