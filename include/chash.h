@@ -18,7 +18,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-// #define CHASH_ENABLE_SEM
+#define CHASH_ENABLE_SEM
 
 typedef struct chash chash;
 typedef struct chash_iter chash_iter;
@@ -45,10 +45,8 @@ chash_iter* chash_iter_next(chash_iter *itor);
 void* chash_iter_key(chash_iter *itor);
 void* chash_iter_value(chash_iter *itor);
 
-void chash_printf(FILE *file, const chash *hash);
-void chash_printf_test(FILE *file, const chash *hash);
-// void chash_adjust(chash *hash);
-
+void chash_printf(const chash *hash, FILE *file);
+void chash_printf_test(const chash *hash, FILE *file);
 
 bool chash_int_haskey(const chash *hash, int key);
 void chash_int_set(chash *hash, int key, void *val);

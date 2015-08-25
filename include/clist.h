@@ -13,7 +13,7 @@ extern "C" {
  * =============================================================================
  }}} */
 
-// #define CLIST_ENABLE_SEM
+#define CLIST_ENABLE_SEM
 
 #include <stdlib.h>
 #include <stdbool.h>

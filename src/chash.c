@@ -17,19 +17,6 @@
 #include "csem.h"
 #endif
 
-#define HASH_JEN_MIX(a,b,c)                  \
-do {                                         \
-    a -= b; a -= c; a ^= ( c >> 13 );        \
-    b -= c; b -= a; b ^= ( a << 8 );         \
-    c -= a; c -= b; c ^= ( b >> 13 );        \
-    a -= b; a -= c; a ^= ( c >> 12 );        \
-    b -= c; b -= a; b ^= ( a << 16 );        \
-    c -= a; c -= b; c ^= ( b >> 5 );         \
-    a -= b; a -= c; a ^= ( c >> 3 );         \
-    b -= c; b -= a; b ^= ( a << 10 );        \
-    c -= a; c -= b; c ^= ( b >> 15 );        \
-} while (0)
-
 typedef struct chash_item
 {
     COBJ_HEAD_VARS;
@@ -231,53 +218,6 @@ void* chash_iter_value(chash_iter *itor)
 
     return NULL;
 }
-
-#if 0
-uint32_t hash_val(const uint8_t *key, uint32_t keylen)
-{
-    uint32_t _hj_i = 0, _hj_j = 0, _hj_k = 0;
-    unsigned char *_hj_key = (unsigned char*)(key);
-    uint32_t hashv = 0xfeedbeef;
-
-    _hj_i = _hj_j = 0x9e3779b9;
-    _hj_k = keylen;
-    while(_hj_k >= 12) {
-    _hj_i += (_hj_key[0] + ((uint32_t)_hj_key[1] << 8)
-          +  ((unsigned)_hj_key[2] << 16)
-          +  ((unsigned)_hj_key[3] << 24));
-    _hj_j +=    (_hj_key[4] + ((uint32_t)_hj_key[5] << 8)
-        + ((uint32_t)_hj_key[6] << 16)
-        + ((uint32_t)_hj_key[7] << 24));
-    hashv += (_hj_key[8] + ( (unsigned)_hj_key[9] << 8)
-        + ((uint32_t)_hj_key[10] << 16)
-        + ((uint32_t)_hj_key[11] << 24));
-
-     HASH_JEN_MIX(_hj_i, _hj_j, hashv);
-
-     _hj_key += 12;
-     _hj_k -= 12;
-    }
-
-    hashv += keylen;
-    switch(_hj_k) {
-    case 11: hashv += ((unsigned)_hj_key[10] << 24);
-    case 10: hashv += ((unsigned)_hj_key[9] << 16);
-    case 9:  hashv += ((unsigned)_hj_key[8] << 8);
-    case 8:  _hj_j += ((unsigned)_hj_key[7] << 24);
-    case 7:  _hj_j += ((unsigned)_hj_key[6] << 16);
-    case 6:  _hj_j += ((unsigned)_hj_key[5] << 8);
-    case 5:  _hj_j += _hj_key[4];
-    case 4:  _hj_i += ((unsigned)_hj_key[3] << 24);
-    case 3:  _hj_i += ((unsigned)_hj_key[2] << 16);
-    case 2:  _hj_i += ((unsigned)_hj_key[1] << 8);
-    case 1:  _hj_i += _hj_key[0];
-    }
-
-    HASH_JEN_MIX(_hj_i, _hj_j, hashv);
-
-    return hashv;
-}
-#endif
 
 inline static uint32_t hash_val_to_bkt(uint32_t hash_val, uint32_t bkts_num)
 {
@@ -519,7 +459,7 @@ void chash_del(chash *hash, const void *key)
     bkt_del(hash, bkt, hash_val, key);
 }
 
-void chash_printf_test(FILE *file, const chash *hash)
+void chash_printf_test(const chash *hash, FILE *file)
 {
     uint32_t i = 0;
     uint32_t idx_item = 0;
@@ -551,7 +491,7 @@ void chash_printf_test(FILE *file, const chash *hash)
     }
 }
 
-void chash_printf(FILE *file, const chash *hash)
+void chash_printf(const chash *hash, FILE *file)
 {
     uint32_t idx_item = 0;
     chash_iter *itor = NULL;

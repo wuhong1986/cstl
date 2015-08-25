@@ -47,11 +47,6 @@ uint32_t cobj_str_hash(const void *obj)
     return murmurhash(((cobj_str*)obj)->val, strlen(((cobj_str*)obj)->val));
 }
 
-static int cobj_str_memsize(const void *obj)
-{
-    return strlen(((cobj_str*)obj)->val);
-}
-
 cobj_ops_t cobj_ops_str = {
     .name = "str",
     .obj_size = sizeof(const char*),
