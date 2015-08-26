@@ -23,7 +23,7 @@ typedef struct cvector_s
 {
     unsigned int size_alloc;
     unsigned int size_offset;
-    cobj **objs;
+    void **objs;
 }cvector;
 
 typedef struct cvector_iter_s
@@ -36,7 +36,7 @@ void cvector_iter_init(cvector_iter *iter, cvector *v, int i);
 void cvector_iter_set_null(cvector_iter *iter);
 bool cvector_iter_is_end(const cvector_iter *iter);
 bool cvector_iter_is_rend(const cvector_iter *iter);
-cobj* cvector_iter_pobj(cvector_iter *iter);
+void* cvector_iter_pobj(cvector_iter *iter);
 cvector_iter cvector_iter_next(const cvector_iter *iter);
 void cvector_iter_to_next(cvector_iter *iter);
 cvector_iter cvector_iter_prev(const cvector_iter *iter);
@@ -50,31 +50,31 @@ int  cvector_length(const cvector *v);
 int  cvector_size(const cvector *v);
 void cvector_print(const cvector *v);
 
-void cvector_insert(cvector *v, int i, cobj *obj);
-void cvector_insert_with_iter(cvector *v, cvector_iter *iter, cobj *obj);
-void cvector_append(cvector *v, cobj *obj);
-void cvector_prepend(cvector *v, cobj *obj);
-cobj* cvector_pop(cvector *v, cvector_iter *iter);
-cobj* cvector_pop_at(cvector *v, int i);
-cobj* cvector_pop_front(cvector *v);
-cobj* cvector_pop_back(cvector *v);
-cobj* cvector_at(cvector *v, int i);
-cobj*  cvector_take_at(cvector *v, int i);
-cobj*  cvector_take_first(cvector *v);
-cobj*  cvector_take_last(cvector *v);
+void cvector_insert(cvector *v, int i, void *obj);
+void cvector_insert_with_iter(cvector *v, cvector_iter *iter, void *obj);
+void cvector_append(cvector *v, void *obj);
+void cvector_prepend(cvector *v, void *obj);
+void* cvector_pop(cvector *v, cvector_iter *iter);
+void* cvector_pop_at(cvector *v, int i);
+void* cvector_pop_front(cvector *v);
+void* cvector_pop_back(cvector *v);
+void* cvector_at(cvector *v, int i);
+void* cvector_take_at(cvector *v, int i);
+void* cvector_take_first(cvector *v);
+void* cvector_take_last(cvector *v);
 cvector_iter cvector_erase(cvector_iter *iter);
 cvector_iter cvector_begin(cvector *v);
 cvector_iter cvector_end(cvector *v);
 cvector_iter cvector_rbegin(cvector *v);
 cvector_iter cvector_rend(cvector *v);
-cobj* cvector_first(cvector *v);
-cobj* cvector_front(cvector *v);
-cobj* cvector_last(cvector *v);
-int   cvector_indexof(const cvector *v, const cobj *obj);
+void* cvector_first(cvector *v);
+void* cvector_front(cvector *v);
+void* cvector_last(cvector *v);
+int   cvector_indexof(const cvector *v, const void *obj);
 
 void cvector_remove(cvector *v, cvector_iter *iter);
 void cvector_remove_at(cvector *v, int i);
-void cvector_replace(cvector *v, int i, cobj *obj);
+void cvector_replace(cvector *v, int i, void *obj);
 
 #ifdef __cplusplus
 }

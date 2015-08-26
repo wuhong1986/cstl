@@ -31,7 +31,7 @@
 /* #include "polarssl/config.h" */
 
 #include <stdio.h>
-#include "cmd5.h"
+#include "md5.h"
 
 /*
  * 32-bit integer manipulation macros (little endian)

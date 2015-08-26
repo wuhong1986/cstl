@@ -11,6 +11,7 @@
 
 extern void add_test_clist(void);
 extern void add_test_chash(void);
+extern void add_test_cvector(void);
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,7 @@ int main(int argc, char *argv[])
 
     add_test_clist();
     add_test_chash();
+    add_test_cvector();
 
     CU_console_run_tests();
 

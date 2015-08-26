@@ -48,7 +48,7 @@ bool cvector_iter_is_rend(const cvector_iter *iter)
     return iter->i < 0;
 }
 
-cobj* cvector_iter_pobj(cvector_iter *iter)
+void* cvector_iter_pobj(cvector_iter *iter)
 {
     if(iter->i >= 0 && iter->i < cvector_size(iter->v)) {
         return CVECTOR_OBJ_PTR(iter->v, iter->i);
@@ -93,9 +93,9 @@ cvector* cvector_new(void)
 
     v->size_offset = 0;
     v->size_alloc = 16;
-    v->objs = (cobj**)malloc(sizeof(cobj*) * v->size_alloc);
+    v->objs = (void**)malloc(sizeof(void*) * v->size_alloc);
 
-    memset(v->objs, 0, sizeof(cobj*) * v->size_alloc);
+    memset(v->objs, 0, sizeof(void*) * v->size_alloc);
 
     return v;
 }
@@ -103,7 +103,7 @@ cvector* cvector_new(void)
 static void cvector_resize(cvector *v)
 {
     v->size_alloc *= 2;
-    v->objs = (cobj**)realloc(v->objs, sizeof(cobj*) * v->size_alloc);
+    v->objs = (void**)realloc(v->objs, sizeof(void*) * v->size_alloc);
 }
 
 void cvector_free(cvector *v)
@@ -117,7 +117,7 @@ void cvector_clear(cvector *v)
 {
     int i = 0;
     for(i = 0; i < v->size_offset; ++i) {
-        cobj_release(CVECTOR_OBJ_PTR(v, i));
+        cobj_destory(CVECTOR_OBJ_PTR(v, i));
     }
     v->size_offset = 0;
 }
@@ -167,7 +167,7 @@ static void cvector_detach_at(cvector *v, int i)
 
 void cvector_remove_at(cvector *v, int i)
 {
-    cobj *obj = NULL;
+    void *obj = NULL;
 
     CVECTOR_CHECK_IDX(v, i);
 
@@ -175,21 +175,21 @@ void cvector_remove_at(cvector *v, int i)
 
     cvector_detach_at(v, i);
 
-    cobj_release(obj);
+    cobj_destory(obj);
 }
 
-void cvector_replace(cvector *v, int i, cobj *obj)
+void cvector_replace(cvector *v, int i, void *obj)
 {
-    cobj *obj_old = NULL;
+    void *obj_old = NULL;
 
     CVECTOR_CHECK_IDX(v, i);
 
     obj_old = CVECTOR_OBJ_PTR(v, i);
     v->objs[i] = obj;
-    cobj_release(obj_old);
+    cobj_destory(obj_old);
 }
 
-void cvector_insert(cvector *v, int i, cobj *obj)
+void cvector_insert(cvector *v, int i, void *obj)
 {
     int idx = 0;
     int pos = i;
@@ -211,12 +211,12 @@ void cvector_insert(cvector *v, int i, cobj *obj)
     ++(v->size_offset);
 }
 
-void cvector_insert_with_iter(cvector *v, cvector_iter *iter, cobj *obj)
+void cvector_insert_with_iter(cvector *v, cvector_iter *iter, void *obj)
 {
     cvector_insert(v, iter->i, obj);
 }
 
-void cvector_append(cvector *v, cobj *obj)
+void cvector_append(cvector *v, void *obj)
 {
     /* check is need adjust size */
     if(v->size_offset + 1 >= v->size_alloc) {
@@ -226,7 +226,7 @@ void cvector_append(cvector *v, cobj *obj)
     v->objs[v->size_offset++] = obj;
 }
 
-void cvector_prepend(cvector *v, cobj *obj)
+void cvector_prepend(cvector *v, void *obj)
 {
     int idx = 0;
 
@@ -242,48 +242,48 @@ void cvector_prepend(cvector *v, cobj *obj)
     ++(v->size_offset);
 }
 
-cobj* cvector_pop_at(cvector *v, int i)
+void* cvector_pop_at(cvector *v, int i)
 {
-    cobj *obj = CVECTOR_OBJ(v, i);
+    void *obj = CVECTOR_OBJ(v, i);
 
     cvector_detach_at(v, i);
 
     return obj;
 }
 
-cobj* cvector_pop(cvector *v, cvector_iter *iter)
+void* cvector_pop(cvector *v, cvector_iter *iter)
 {
     return cvector_pop_at(v, iter->i);
 }
 
-cobj* cvector_pop_front(cvector *v)
+void* cvector_pop_front(cvector *v)
 {
     return cvector_pop_at(v, 0);
 }
 
-cobj* cvector_pop_back(cvector *v)
+void* cvector_pop_back(cvector *v)
 {
     return cvector_pop_at(v, v->size_offset - 1);
 }
 
-cobj* cvector_at(cvector *v, int i)
+void* cvector_at(cvector *v, int i)
 {
     CVECTOR_CHECK_IDX_RETURN_NULL(v, i);
 
     return CVECTOR_OBJ_PTR(v, i);
 }
 
-cobj*  cvector_take_at(cvector *v, int i)
+void*  cvector_take_at(cvector *v, int i)
 {
     return CVECTOR_OBJ(v, i);
 }
 
-cobj*  cvector_take_first(cvector *v)
+void*  cvector_take_first(cvector *v)
 {
     return CVECTOR_OBJ(v, 0);
 }
 
-cobj*  cvector_take_last(cvector *v)
+void*  cvector_take_last(cvector *v)
 {
     return CVECTOR_OBJ(v, v->size_offset - 1);
 }
