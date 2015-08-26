@@ -44,7 +44,11 @@ static void cobj_str_free(void *obj)
 
 uint32_t cobj_str_hash(const void *obj)
 {
-    return murmurhash(((cobj_str*)obj)->val, strlen(((cobj_str*)obj)->val));
+    if(((cobj_str*)obj)->val){
+        return murmurhash(((cobj_str*)obj)->val, strlen(((cobj_str*)obj)->val));
+    } else {
+        return 0;
+    }
 }
 
 cobj_ops_t cobj_ops_str = {
@@ -75,7 +79,7 @@ void cobj_str_init(cobj_str *obj, const char *str)
 {
     cobj_set_ops(obj, &cobj_ops_str);
 
-    obj->val = strdup(str);
+    obj->val = str ? strdup(str) : NULL;
 }
 
 void cobj_str_release(cobj_str *obj)

@@ -295,6 +295,18 @@ void chash_free(chash *hash)
     free(hash);
 }
 
+void chash_clear(chash *hash)
+{
+    uint32_t bkts_num = hash->bkts_num;
+    uint32_t i = 0;
+    chash_bkt *bkt     = NULL;
+
+    for (i = 0; i < bkts_num; i++) {
+        bkt = &(hash->bkts[i]);
+        clist_clear(bkt->items);
+    }
+}
+
 #ifdef CHASH_ENABLE_SEM
 void chash_lock(chash *hash)
 {

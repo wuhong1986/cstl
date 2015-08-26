@@ -21,7 +21,6 @@
 #define CVECTOR_CHECK_IDX(v, i) CVECTOR_CHECK_IDX_FULL(v, i, )
 #define CVECTOR_CHECK_IDX_RETURN_NULL(v, i) CVECTOR_CHECK_IDX_FULL(v, i, NULL)
 
-#define CVECTOR_OBJ_PTR(v, i) ((v)->objs[i])
 #define CVECTOR_OBJ(v, i) ((v)->objs[i])
 
 /*********************************************************************
@@ -51,7 +50,7 @@ bool cvector_iter_is_rend(const cvector_iter *iter)
 void* cvector_iter_pobj(cvector_iter *iter)
 {
     if(iter->i >= 0 && iter->i < cvector_size(iter->v)) {
-        return CVECTOR_OBJ_PTR(iter->v, iter->i);
+        return CVECTOR_OBJ(iter->v, iter->i);
     } else {
         return NULL;
     }
@@ -117,7 +116,7 @@ void cvector_clear(cvector *v)
 {
     int i = 0;
     for(i = 0; i < v->size_offset; ++i) {
-        cobj_destory(CVECTOR_OBJ_PTR(v, i));
+        cobj_destory(CVECTOR_OBJ(v, i));
     }
     v->size_offset = 0;
 }
@@ -142,7 +141,7 @@ void cvector_print(const cvector *v)
     int i = 0;
     printf("[");
     for(i = 0; i < v->size_offset; ++i) {
-        cobj_print(CVECTOR_OBJ_PTR(v, i));
+        cobj_print(CVECTOR_OBJ(v, i));
         if(i != v->size_offset - 1) {
             printf(", ");
         }
@@ -171,7 +170,7 @@ void cvector_remove_at(cvector *v, int i)
 
     CVECTOR_CHECK_IDX(v, i);
 
-    obj = CVECTOR_OBJ_PTR(v, i);
+    obj = CVECTOR_OBJ(v, i);
 
     cvector_detach_at(v, i);
 
@@ -184,7 +183,7 @@ void cvector_replace(cvector *v, int i, void *obj)
 
     CVECTOR_CHECK_IDX(v, i);
 
-    obj_old = CVECTOR_OBJ_PTR(v, i);
+    obj_old = CVECTOR_OBJ(v, i);
     v->objs[i] = obj;
     cobj_destory(obj_old);
 }
@@ -270,20 +269,15 @@ void* cvector_at(cvector *v, int i)
 {
     CVECTOR_CHECK_IDX_RETURN_NULL(v, i);
 
-    return CVECTOR_OBJ_PTR(v, i);
-}
-
-void*  cvector_take_at(cvector *v, int i)
-{
     return CVECTOR_OBJ(v, i);
 }
 
-void*  cvector_take_first(cvector *v)
+void*  cvector_at_first(cvector *v)
 {
     return CVECTOR_OBJ(v, 0);
 }
 
-void*  cvector_take_last(cvector *v)
+void*  cvector_at_last(cvector *v)
 {
     return CVECTOR_OBJ(v, v->size_offset - 1);
 }

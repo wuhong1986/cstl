@@ -27,6 +27,7 @@ uint32_t hash_val(const uint8_t *key, uint32_t keylen);
 
 chash *chash_new(void);
 void chash_free(chash *hash);
+void chash_clear(chash *hash);
 uint32_t chash_count(const chash *hash);
 bool chash_haskey(const chash *hash, const void *key);
 void chash_del(chash *hash, const void *key);
