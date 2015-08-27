@@ -86,15 +86,20 @@ void cvector_iter_to_prev(cvector_iter *iter)
     --(iter->i);
 }
 
-cvector* cvector_new(void)
+void cvector_init(cvector *v)
 {
-    cvector *v = (cvector*)malloc(sizeof(cvector));
-
     v->size_offset = 0;
     v->size_alloc = 16;
     v->objs = (void**)malloc(sizeof(void*) * v->size_alloc);
 
     memset(v->objs, 0, sizeof(void*) * v->size_alloc);
+}
+
+cvector* cvector_new(void)
+{
+    cvector *v = (cvector*)malloc(sizeof(cvector));
+
+    cvector_init(v);
 
     return v;
 }
@@ -105,11 +110,16 @@ static void cvector_resize(cvector *v)
     v->objs = (void**)realloc(v->objs, sizeof(void*) * v->size_alloc);
 }
 
+void cvector_release(cvector *v)
+{
+    cvector_clear(v);
+    free(v->objs);
+}
+
 void cvector_free(cvector *v)
 {
     if(v) {
-        cvector_clear(v);
-        free(v->objs);
+        cvector_release(v);
         free(v);
     }
 }
@@ -151,33 +161,46 @@ void cvector_print(const cvector *v)
     printf("]");
 }
 
-void cvector_remove(cvector *v, cvector_iter *iter)
-{
-    return cvector_remove_at(v, iter->i);
-}
-
-static void cvector_detach_at(cvector *v, int i)
+void cvector_remove_at_range(cvector *v, int first, int last)
 {
     int idx = 0;
+    int length = last - first;
 
-    for(idx = i; idx < v->size_offset - 1; ++idx) {
-        v->objs[idx] = v->objs[idx + 1];
+    if(last > cvector_size(v)) {
+        length = cvector_size(v) - first;
     }
-    --(v->size_offset);
+
+    if(length == 0) return;
+
+    CVECTOR_CHECK_IDX(v, first);
+
+    /* printf("remove at %d-%d\n", i, j); */
+    for(idx = first; idx < first + length; ++idx) {
+        cobj_free(v->objs[idx]);
+    }
+
+    v->size_offset -= length;
+    for(idx = first; idx < cvector_size(v); ++idx) {
+        v->objs[idx] = v->objs[idx + length];
+    }
+
 }
 
 void cvector_remove_at(cvector *v, int i)
 {
-    void *obj = NULL;
-
-    CVECTOR_CHECK_IDX(v, i);
-
-    obj = CVECTOR_OBJ(v, i);
-
-    cvector_detach_at(v, i);
-
-    cobj_destory(obj);
+    cvector_remove_at_range(v, i, i + 1);
 }
+
+void cvector_remove(cvector_iter *iter)
+{
+    return cvector_remove_at(iter->v, iter->i);
+}
+
+void cvector_remove_range(cvector_iter *iter_first, cvector_iter *iter_last)
+{
+    return cvector_remove_at_range(iter_first->v, iter_first->i, iter_last->i + 1);
+}
+
 
 void cvector_replace(cvector *v, int i, void *obj)
 {
@@ -245,9 +268,14 @@ void cvector_prepend(cvector *v, void *obj)
 
 void* cvector_pop_at(cvector *v, int i)
 {
+    int idx = 0;
     void *obj = CVECTOR_OBJ(v, i);
 
-    cvector_detach_at(v, i);
+    for(idx = i; idx < v->size_offset - 1; ++idx) {
+        v->objs[idx] = v->objs[idx + 1];
+    }
+
+    --(v->size_offset);
 
     return obj;
 }

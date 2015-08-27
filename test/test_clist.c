@@ -32,6 +32,7 @@ void test_clist(void)
     for(i = 0; i < test_cnt; ++i) {
         void *obj = clist_pop_front(list);
         CU_ASSERT(i == cobj_int_val(obj));
+        cobj_free(obj);
     }
     CU_ASSERT(0 == clist_len(list));
     CU_ASSERT(true == clist_is_empty(list));

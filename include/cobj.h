@@ -32,6 +32,7 @@ typedef struct cobj_ops_s
 }cobj_ops_t;
 
 #define COBJ_HEAD_VARS const cobj_ops_t *ops
+#define CONTAINER_HEAD_VARS const containers_ops_t *containers_ops;
 
 void  cobj_set_ops(void *obj, const cobj_ops_t *ops);
 void* cobj_dup(const void *obj);

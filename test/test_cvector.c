@@ -14,7 +14,7 @@
 void test_cvector(void)
 {
     cvector *v = cvector_new();
-    int test_cnt = 10000;
+    int test_cnt = 1000;
     int i = 0;
 
     for(i = 0; i < test_cnt; ++i) {
@@ -32,6 +32,23 @@ void test_cvector(void)
 
     for(i = 0; i < test_cnt; ++i) {
         CU_ASSERT(test_cnt - i - 1 == cobj_int_val(cvector_at(v, i)));
+    }
+
+    cvector_clear(v);
+    for(i = 0; i < test_cnt; ++i) {
+        cvector_append(v, cobj_int_new(i));
+    }
+
+    cvector_remove_at(v, 100);
+    for(i = 0; i < 100; ++i) {
+        CU_ASSERT(i == cobj_int_val(cvector_at(v, i)));
+    }
+    for(i = 100; i < cvector_size(v); ++i) {
+        CU_ASSERT(i + 1 == cobj_int_val(cvector_at(v, i)));
+    }
+    cvector_remove_at_range(v, 100, 130);
+    for(i = 100; i < cvector_size(v); ++i) {
+        CU_ASSERT(i + 31 == cobj_int_val(cvector_at(v, i)));
     }
 
     cvector_free(v);
