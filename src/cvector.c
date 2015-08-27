@@ -107,16 +107,18 @@ static void cvector_resize(cvector *v)
 
 void cvector_free(cvector *v)
 {
-    cvector_clear(v);
-    free(v->objs);
-    free(v);
+    if(v) {
+        cvector_clear(v);
+        free(v->objs);
+        free(v);
+    }
 }
 
 void cvector_clear(cvector *v)
 {
     int i = 0;
     for(i = 0; i < v->size_offset; ++i) {
-        cobj_destory(CVECTOR_OBJ(v, i));
+        cobj_free(CVECTOR_OBJ(v, i));
     }
     v->size_offset = 0;
 }

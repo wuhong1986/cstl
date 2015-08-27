@@ -278,21 +278,24 @@ uint32_t chash_count(const chash *hash)
 
 void chash_free(chash *hash)
 {
-    uint32_t bkts_num = hash->bkts_num;
-    uint32_t i = 0;
+    uint32_t  bkts_num = 0;
+    uint32_t  i        = 0;
     chash_bkt *bkt     = NULL;
 
+    if(hash){
+        bkts_num = hash->bkts_num;
 #ifdef CHASH_ENABLE_SEM
-    cmutex_free(hash->mutex);
+        cmutex_free(hash->mutex);
 #endif
 
-    for (i = 0; i < bkts_num; i++) {
-        bkt = &(hash->bkts[i]);
-        clist_free(bkt->items);
-    }
+        for (i = 0; i < bkts_num; i++) {
+            bkt = &(hash->bkts[i]);
+            clist_free(bkt->items);
+        }
 
-    free(hash->bkts);
-    free(hash);
+        free(hash->bkts);
+        free(hash);
+    }
 }
 
 void chash_clear(chash *hash)

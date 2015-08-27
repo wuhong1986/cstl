@@ -195,13 +195,13 @@ void clist_clear(clist *list)
  */
 void clist_free(clist *list)
 {
-    if(NULL == list) return;
-
-    clist_clear(list);
+    if(list){
+        clist_clear(list);
 #ifdef CLIST_ENABLE_SEM
-    csem_free(list->sem);
+        csem_free(list->sem);
 #endif
-    free(list);
+        free(list);
+    }
 }
 
 /*
