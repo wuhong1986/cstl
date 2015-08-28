@@ -30,6 +30,7 @@ bool csem_try_acquire(csem *sem, int n);
 void csem_release(csem *sem, int n);
 
 #define csem_down       csem_lock
+#define csem_down_timed csem_lock_timed
 #define csem_up         csem_unlock
 #define cmutex_free     csem_free
 #define cmutex_lock     csem_lock

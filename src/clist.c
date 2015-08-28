@@ -403,12 +403,12 @@ void clist_remove(clist_iter *iter)
 {
     clist *list = iter->list;
     clist_node *node = iter->node;
+    void *obj = NULL;
 
     if(!list || !node) return;
 
-    clist_detach_node(list, node);
-
-    clist_node_free(node);
+    obj = clist_detach_node(list, node);
+    cobj_free(obj);
 }
 
 void clist_remove_at(clist *list, int index)
