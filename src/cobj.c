@@ -25,15 +25,15 @@ typedef struct cobj
 
 void cobj_set_ops(void *obj, const cobj_ops_t *ops)
 {
-    COBJ(obj)->ops = ops;
+    COBJ(obj)->__obj = ops;
 }
 
 int cobj_fprint(const void *obj, FILE *pfile)
 {
     if(obj == NULL) {
         return fprintf(pfile, "<NULL>");
-    } else if(COBJ(obj)->ops->cb_print) {
-        return COBJ(obj)->ops->cb_print(obj, pfile);
+    } else if(COBJ(obj)->__obj->cb_print) {
+        return COBJ(obj)->__obj->cb_print(obj, pfile);
     } else {
         return fprintf(pfile, "< void at 0x%lX, Type \"%s\" >",
                        (unsigned long)obj, COBJ(obj)->ops->name);
@@ -49,11 +49,11 @@ struct cstring_s *cobj_to_cstr(const void *obj)
 {
     cstr *str = NULL;
 
-    if(COBJ(obj)->ops->cb_cstr) {
-        return COBJ(obj)->ops->cb_cstr(obj);
+    if(COBJ(obj)->__obj->cb_cstr) {
+        return COBJ(obj)->__obj->cb_cstr(obj);
     } else {
         str = cstr_new_with_format("< void at 0x%lX, Type \"%s\" >",
-                                   (unsigned long)obj, COBJ(obj)->ops->name);
+                                   (unsigned long)obj, COBJ(obj)->__obj->name);
         return str;
     }
 }
@@ -63,11 +63,11 @@ void *cobj_dup_callback_default(const void *obj)
     void *val_dup = NULL;
     size_t obj_size = 0;
 
-    obj_size = COBJ(obj)->ops->obj_size;
+    obj_size = COBJ(obj)->__obj->obj_size;
 
     if(0 == obj_size) {
         printf("[void][DUP] Type:%s duplicate size == 0",
-               COBJ(obj)->ops->name);
+               COBJ(obj)->__obj->name);
     }
 
     val_dup = malloc(obj_size);
@@ -78,8 +78,8 @@ void *cobj_dup_callback_default(const void *obj)
 
 void *cobj_dup(const void *obj)
 {
-    if(COBJ(obj)->ops->cb_dup) {
-        return COBJ(obj)->ops->cb_dup(obj);
+    if(COBJ(obj)->__obj->cb_dup) {
+        return COBJ(obj)->__obj->cb_dup(obj);
     } else {
         return cobj_dup_callback_default(obj);
     }
@@ -94,8 +94,8 @@ void cobj_destory(void *obj)
     printf(", object counts:%d\n", cnt_objs);
 #endif
 
-    if(COBJ(obj)->ops->cb_destructor) {
-        COBJ(obj)->ops->cb_destructor(obj);
+    if(COBJ(obj)->__obj->cb_destructor) {
+        COBJ(obj)->__obj->cb_destructor(obj);
     }
 }
 
@@ -107,8 +107,8 @@ void cobj_free(void *obj)
 
 uint32_t cobj_hash(const void *obj)
 {
-    if(COBJ(obj)->ops->cb_hash) {
-        return COBJ(obj)->ops->cb_hash(obj);
+    if(COBJ(obj)->__obj->cb_hash) {
+        return COBJ(obj)->__obj->cb_hash(obj);
     } else {
 #if 0
         printf("\n");
@@ -125,8 +125,8 @@ uint32_t cobj_hash(const void *obj)
 
 int  cobj_cmp(const void *obj1, const void *obj2)
 {
-    if(COBJ(obj1)->ops->cb_cmp && COBJ(obj2)->ops->cb_cmp
-    && COBJ(obj1)->ops->cb_cmp == COBJ(obj2)->ops->cb_cmp) {
+    if(COBJ(obj1)->__obj->cb_cmp && COBJ(obj2)->__obj->cb_cmp
+    && COBJ(obj1)->__obj->cb_cmp == COBJ(obj2)->__obj->cb_cmp) {
         return COBJ(obj1)->ops->cb_cmp(obj1, obj2);
     } else {
         return (unsigned long)obj1 - (unsigned long)obj2;
@@ -140,5 +140,5 @@ bool cobj_equal(const void *obj1, const void *obj2)
 
 int cobj_size(const void *obj)
 {
-    return COBJ(obj)->ops->obj_size;
+    return COBJ(obj)->__obj->obj_size;
 }
