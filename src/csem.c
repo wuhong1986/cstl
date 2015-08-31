@@ -107,21 +107,30 @@ int  csem_lock_timed(csem *sem, int msec)
     }
 #else
     struct timespec time;
-    struct timespec *time_out = &time;
+    int ret = 0;
 
-    if(msec > 0){
-        time_out->tv_sec  = msec / 1000;
-        time_out->tv_nsec = msec % 1000 * 1000;
-    } else {
-        time_out = NULL;
+    if(clock_gettime(CLOCK_REALTIME, &time) == -1) {
+        printf("clock_gettime failed");
+        return -1;
     }
 
-    if(sem_timedwait(&(sem->sem), time_out) == -1){
+    time.tv_sec  += msec / 1000;
+    time.tv_nsec += msec % 1000 * 1000000;
+    if(time.tv_nsec >= 1000000000) {
+        time.tv_sec += 1;
+        time.tv_nsec -= 1000000000;
+    }
+
+    /* printf("sec: %d, nsec: %d\n", time.tv_sec, time.tv_nsec); */
+    while ((ret = sem_timedwait(&(sem->sem), &time)) == -1 && errno == EINTR)
+        continue;       /* Restart if interrupted by handler */
+
+    if(ret == -1){
         if(ETIMEDOUT == errno){
             /* printf("sem down timeout, wait time:%d\n", msec); */
             return 1;
         } else {
-            printf("semop down failed:%s", strerror(errno));
+            printf("semop down failed:%s\n", strerror(errno));
             assert(0);
             return -1;
         }
