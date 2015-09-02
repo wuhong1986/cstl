@@ -21,6 +21,8 @@ extern "C" {
 #include <sys/types.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #define CSTRING_DEBUG
 
