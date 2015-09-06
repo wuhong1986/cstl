@@ -2,3 +2,5 @@
 .vimproject
 cstl_test
 *.pyc
+test/bin/
+test/cstl.depend

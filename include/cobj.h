@@ -31,7 +31,7 @@ typedef struct cobj_ops_s
     cobj_cb_hash        cb_hash;
 }cobj_ops_t;
 
-#define COBJ_HEAD_VARS const cobj_ops_t *ops
+#define COBJ_HEAD_VARS const cobj_ops_t *__obj
 #define CONTAINER_HEAD_VARS const containers_ops_t *containers_ops;
 
 void  cobj_set_ops(void *obj, const cobj_ops_t *ops);
