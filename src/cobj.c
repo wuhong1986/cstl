@@ -36,7 +36,7 @@ int cobj_fprint(const void *obj, FILE *pfile)
         return COBJ(obj)->__obj->cb_print(obj, pfile);
     } else {
         return fprintf(pfile, "< void at 0x%lX, Type \"%s\" >",
-                       (unsigned long)obj, COBJ(obj)->ops->name);
+                       (unsigned long)obj, COBJ(obj)->__obj->name);
     }
 }
 
@@ -127,7 +127,7 @@ int  cobj_cmp(const void *obj1, const void *obj2)
 {
     if(COBJ(obj1)->__obj->cb_cmp && COBJ(obj2)->__obj->cb_cmp
     && COBJ(obj1)->__obj->cb_cmp == COBJ(obj2)->__obj->cb_cmp) {
-        return COBJ(obj1)->ops->cb_cmp(obj1, obj2);
+        return COBJ(obj1)->__obj->cb_cmp(obj1, obj2);
     } else {
         return (unsigned long)obj1 - (unsigned long)obj2;
     }
