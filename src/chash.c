@@ -511,7 +511,6 @@ void chash_printf(const chash *hash, FILE *file)
     uint32_t idx_item = 0;
     chash_iter *itor = NULL;
 
-
     fprintf(file, "{");
 
     itor = chash_iter_new(hash);
@@ -526,6 +525,32 @@ void chash_printf(const chash *hash, FILE *file)
         chash_iter_next(itor);
     }
     fprintf(file, "}");
+
+    chash_iter_free(itor);
+}
+
+void chash_to_cstr(const chash *hash, cstr *str)
+{
+    uint32_t idx_item = 0;
+    chash_iter *itor = NULL;
+    cstr *str_item = NULL;
+
+    cstr_append(str, "{");
+
+    itor = chash_iter_new(hash);
+    while(!chash_iter_is_end(itor)){
+        str_item = cobj_to_cstr(clist_iter_obj(&(itor->item_iter)));
+        cstr_add(str, str_item);
+        cstr_free(str_item);
+
+        ++idx_item;
+        if(idx_item < hash->cnt_items) {
+            cstr_append(str, ", ");
+        }
+
+        chash_iter_next(itor);
+    }
+    cstr_append(str, "}");
 
     chash_iter_free(itor);
 }

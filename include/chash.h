@@ -17,6 +17,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "cstring.h"
 
 #define CHASH_ENABLE_SEM
 
@@ -33,6 +34,7 @@ bool chash_haskey(const chash *hash, const void *key);
 void chash_del(chash *hash, const void *key);
 void* chash_get_value(chash *hash, const void *key);
 void chash_set(chash *hash, void *key, void *val);
+void chash_to_cstr(const chash *hash, cstr *str);
 
 #ifdef CHASH_ENABLE_SEM
 void chash_lock(chash *hash);
